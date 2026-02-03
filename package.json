@@ -5,7 +5,8 @@
   "scripts": {
     "start": "ts-node src/server.ts",
     "dev": "nodemon src/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test-db": "ts-node src/db/test.ts",
+    "db:setup": "ts-node src/db/setup.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,8 +20,10 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
     "@types/node": "^25.2.0",
+    "@types/pg": "^8.16.0",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
