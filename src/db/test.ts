@@ -1,4 +1,4 @@
-import { pool } from './db/index';
+import { pool } from './index';
 
 async function test() {
   const res = await pool.query('SELECT NOW()');

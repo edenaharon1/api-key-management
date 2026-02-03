@@ -33,5 +33,37 @@ export const KeysService = {
 
   async list(accountId: string) {
     return KeysRepository.list(accountId);
-  }
+  },
+
+  async revoke(id: string) {
+  const existingKey = await KeysRepository.findById(id);
+  if (!existingKey) return null;
+
+  if (existingKey.revoked_at) return existingKey;
+
+  const revokedAt = new Date();
+  const updatedKey = await KeysRepository.updateRevoked(id, revokedAt);
+  return updatedKey;
+},
+
+  async verify(apiKey: string) {
+  const [prefix, secret] = apiKey.split('.');
+  if (!prefix || !secret) return null;
+
+  const keyRecord = await KeysRepository.findByPrefix(prefix);
+  if (!keyRecord) return null;
+  if (keyRecord.revoked_at) return null;
+
+  const match = await bcrypt.compare(secret, keyRecord.secret_hash);
+  if (!match) return null;
+
+  return {
+    accountId: keyRecord.account_id,
+    keyId: keyRecord.id
+  };
+}
+
+
 };
+
+

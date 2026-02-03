@@ -18,3 +18,19 @@ export const listKeys = async (req: Request, res: Response) => {
   const keys = await KeysService.list(accountId);
   res.status(200).json(keys);
 };
+
+export const revokeKey = async (req: Request, res: Response) => {
+  const id = req.params.id as string; // <-- כאן אנחנו אומרים ל-TypeScript שזה string
+
+  if (!id) {
+    return res.status(400).json({ error: 'Missing key ID' });
+  }
+
+  const key = await KeysService.revoke(id);
+  if (!key) {
+    return res.status(404).json({ error: 'Key not found' });
+  }
+
+  res.status(200).json(key);
+};
+
