@@ -23,13 +23,13 @@ export const KeysRepository = {
 
   async list(accountId: string) {
     const result = await pool.query(
-      `SELECT id, account_id, name, prefix, created_at, revoked_at
-       FROM api_keys
-       WHERE account_id = $1
-       ORDER BY created_at DESC`,
-      [accountId]
-    );
-    return result.rows;
+    `SELECT id, account_id, name, prefix, created_at, revoked_at
+     FROM api_keys
+     WHERE account_id = $1 
+     ORDER BY created_at DESC`,
+    [accountId]
+  );
+  return result.rows;
   },
 
   async findById(id: string) {

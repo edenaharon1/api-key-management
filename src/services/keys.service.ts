@@ -19,7 +19,6 @@ export const KeysService = {
       secret_hash: secretHash
     });
 
-    // מחזירים את המידע + apiKey מלא רק כאן
     return {
       id: record.id,
       account_id: record.account_id,
@@ -32,18 +31,26 @@ export const KeysService = {
   },
 
   async list(accountId: string) {
-    return KeysRepository.list(accountId);
+  const records = await KeysRepository.list(accountId);
+
+  // double check שלא מוחזר SECRET_HASH
+  return records.map(({ secret_hash, ...meta }) => meta);
   },
 
-  async revoke(id: string) {
+
+async revoke(id: string, accountId: string) {
   const existingKey = await KeysRepository.findById(id);
-  if (!existingKey) return null;
-
-  if (existingKey.revoked_at) return existingKey;
-
-  const revokedAt = new Date();
-  const updatedKey = await KeysRepository.updateRevoked(id, revokedAt);
-  return updatedKey;
+  if (!existingKey || existingKey.account_id !== accountId) {
+    return null;
+  }
+  let updatedKey = existingKey;
+  if (!existingKey.revoked_at) {
+    const revokedAt = new Date();
+    updatedKey = await KeysRepository.updateRevoked(id, revokedAt);
+  }
+  // מסירים את secret_hash לפני החזרה לController
+  const { secret_hash, ...safeKey } = updatedKey;
+  return safeKey;
 },
 
   async verify(apiKey: string) {
