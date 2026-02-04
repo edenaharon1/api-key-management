@@ -15,4 +15,4 @@ async function setupDB() {
   }
 }
 
-setupDB();
+setupDB();//this file is for running INIT.sql according to the code
